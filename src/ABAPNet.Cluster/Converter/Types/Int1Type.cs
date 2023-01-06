@@ -6,23 +6,28 @@
 
         public byte TypeFlag => 0x0a;
 
+        public byte SpecFlag => 0x00;
+
         public byte StructDescrFlag => 0xaa;
 
         public int StructDescrByteLength => 1;
 
         public int AlignmentFactor => 1;
 
-        public ReadOnlySpan<byte> GetBytes(object data)
+        public ReadOnlySpan<byte> GetBytes(object? data)
         {
             Span<byte> buffer = new Span<byte>(new byte[StructDescrByteLength]);
 
             if (data == null)
                 return buffer;
 
-            if (data is not byte byteValue)
-                throw new Exception("Invalid data type");
+            buffer[0] = data switch
+            {
+                byte byteValue => byteValue,
+                sbyte sbyteValue => (byte)sbyteValue,
+                _ => throw new InvalidTypeException(data, typeof(byte), typeof(sbyte))
+            };
 
-            buffer[0] = byteValue;
             return buffer;
         }
     }

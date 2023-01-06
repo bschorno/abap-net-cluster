@@ -1,6 +1,5 @@
 ﻿using ABAPNet.Cluster.Attributes;
 using ABAPNet.Cluster.Converter.Descriptors;
-using ABAPNet.Cluster.Utils;
 using System.Reflection;
 using System.Text;
 
@@ -50,13 +49,13 @@ namespace ABAPNet.Cluster
             throw new NotImplementedException();
         }
 
-        private void WriteClusterField(DataBufferWriter writer, string name, Descriptor descriptor, object data)
+        private void WriteClusterField(DataBufferWriter writer, string name, Descriptor descriptor, object? data)
         {
             DataBufferSegment segment = writer.OpenSegment(name);
 
             writer.WriteByte(descriptor.Type.KindFlag);
             writer.WriteByte(descriptor.Type.TypeFlag);
-            writer.WriteByte(0x00);
+            writer.WriteByte(descriptor.Type.SpecFlag);
 
             writer.WriteInvertedInt(descriptor.GetDescrByteLength());
             writer.Write(new byte[4]);

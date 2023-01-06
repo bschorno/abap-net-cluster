@@ -2,12 +2,13 @@
 
 namespace ABAPNet.Cluster.Attributes
 {
-    public class NumcAttribute : TypeAttribute
+    public sealed class NumcAttribute : TypeAttribute
     {
         public int Length { get; set; }
 
         public NumcAttribute(int length)
         {
+            if (length <= 0) throw new ArgumentException("Length should be greater than zero", nameof(length));
             Length = length;
         }
 

@@ -10,6 +10,8 @@ namespace ABAPNet.Cluster.Converter.Types
 
         public byte TypeFlag => 0x06;
 
+        public byte SpecFlag => 0x00;
+
         public byte StructDescrFlag => 0xaa;
 
         public int StructDescrByteLength => _length * 2;
@@ -24,28 +26,32 @@ namespace ABAPNet.Cluster.Converter.Types
             _length = length;
         }
 
-        public ReadOnlySpan<byte> GetBytes(object data)
+        public ReadOnlySpan<byte> GetBytes(object? data)
         {
             Span<byte> buffer = new Span<byte>(new byte[StructDescrByteLength]);
 
             if (data == null)
-                return buffer;
+                data = new string('0', _length);
 
             if (data is not string stringValue)
             {
                 stringValue = data switch
                 {
-                    byte byteValue => byteValue.ToString(),
-                    short shortValue => shortValue.ToString(),
-                    int intValue => intValue.ToString(),
-                    long longValue => longValue.ToString(),
-                    sbyte sbyteValue => sbyteValue.ToString(),
-                    ushort ushortValue => ushortValue.ToString(),
-                    uint uintValue => uintValue.ToString(),
-                    ulong ulongValue => ulongValue.ToString(),
-                    _ => throw new Exception("Invalid data type")
+                    byte value => value.ToString(),
+                    short value => value.ToString(),
+                    int value => value.ToString(),
+                    long value => value.ToString(),
+                    sbyte value => value.ToString(),
+                    ushort value => value.ToString(),
+                    uint value => value.ToString(),
+                    ulong value => value.ToString(),
+                    _ => throw new InvalidTypeException(data, typeof(byte), typeof(short), typeof(int), typeof(long), typeof(sbyte), typeof(ushort), typeof(uint), typeof(ulong), typeof(string))
                 };
             }
+
+            foreach (var c in stringValue)
+                if (c < '0' || c > '9')
+                    throw new InvalidValueException(stringValue, "Value can only contains digits from 0-9");
 
             if (stringValue.Length > _length)
                 stringValue = stringValue.Substring(0, _length);

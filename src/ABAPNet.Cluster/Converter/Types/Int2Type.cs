@@ -6,23 +6,31 @@
 
         public byte TypeFlag => 0x09;
 
+        public byte SpecFlag => 0x00;
+
         public byte StructDescrFlag => 0xaa;
 
         public int StructDescrByteLength => 2;
 
         public int AlignmentFactor => 2;
 
-        public ReadOnlySpan<byte> GetBytes(object data)
+        public ReadOnlySpan<byte> GetBytes(object? data)
         {
             Span<byte> buffer = new Span<byte>(new byte[StructDescrByteLength]);
 
             if (data == null)
                 return buffer;
 
-            if (data is not short shortValue)
-                throw new Exception("Invalid data type");
+            var result = data switch
+            {
+                short value => BitConverter.TryWriteBytes(buffer, value),
+                ushort value => BitConverter.TryWriteBytes(buffer, value),
+                _ => throw new InvalidTypeException(data, typeof(short), typeof(ushort))
+            };
 
-            BitConverter.TryWriteBytes(buffer, shortValue);
+            if (!result)
+                throw new Exception("Unexpected exception");
+
             return buffer;
         }
     }

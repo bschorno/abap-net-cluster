@@ -1,5 +1,4 @@
 ﻿using ABAPNet.Cluster.Converter.Types;
-using ABAPNet.Cluster.Utils;
 using System.Collections;
 
 namespace ABAPNet.Cluster.Converter.Descriptors
@@ -24,20 +23,14 @@ namespace ABAPNet.Cluster.Converter.Descriptors
 
         internal override int GetDescrByteLength()
         {
-            int byteLength = _componentDescriptors[0].GetDescrByteLength();
-            //int alignmentFactor = GetDescrAlignmentFactor();
-
-            //if (alignmentFactor > 0 && byteLength % alignmentFactor > 0)
-            //    byteLength += alignmentFactor - byteLength % alignmentFactor;
-
-            return byteLength;
+            return _componentDescriptors[0].GetDescrByteLength();
         }
 
         internal override void WriteDescription(DataBufferWriter writer)
         {
             writer.WriteByte(_type.StructDescrStartFlag);
             writer.WriteByte(_type.TypeFlag);
-            writer.WriteByte(0x00);
+            writer.WriteByte(_type.SpecFlag);
 
             writer.WriteInvertedInt(GetDescrByteLength());
 
@@ -45,18 +38,18 @@ namespace ABAPNet.Cluster.Converter.Descriptors
 
             writer.WriteByte(_type.StructDescrEndFlag);
             writer.WriteByte(_type.TypeFlag);
-            writer.WriteByte(0x00);
+            writer.WriteByte(_type.SpecFlag);
 
             writer.WriteInvertedInt(GetDescrByteLength());
         }
 
-        internal override void WriteContent(DataBufferWriter writer, object data)
+        internal override void WriteContent(DataBufferWriter writer, object? data)
         {
             if (data == null)
                 throw new NullReferenceException("Data can't be null");
 
             if (data is not IList list)
-                throw new Exception("Data is not an array");
+                throw new InvalidTypeException(data, typeof(IList));
 
             writer.CurrentSegment.OpenDataContentContainer(DataBufferSegment.DataContentContainerType.TableType);
 

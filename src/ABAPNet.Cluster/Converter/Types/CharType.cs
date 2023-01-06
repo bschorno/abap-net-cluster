@@ -10,6 +10,8 @@ namespace ABAPNet.Cluster.Converter.Types
 
         public byte TypeFlag => 0x00;
 
+        public byte SpecFlag => 0x00;
+
         public byte StructDescrFlag => 0xaa;
 
         public int StructDescrByteLength => _length * 2;
@@ -24,19 +26,19 @@ namespace ABAPNet.Cluster.Converter.Types
             _length = length;
         }
 
-        public ReadOnlySpan<byte> GetBytes(object data)
+        public ReadOnlySpan<byte> GetBytes(object? data)
         {
             Span<byte> buffer = new Span<byte>(new byte[StructDescrByteLength]);
 
             if (data == null)
-                return buffer;
+                data = new string(' ', _length);
 
             if (data is not string stringValue)
             {
                 if (_length == 1 && data is char charValue)
                     stringValue = charValue.ToString();
                 else
-                    throw new Exception("Invalid data type");
+                    throw new InvalidTypeException(data, typeof(string), typeof(char));
             }
 
             if (stringValue.Length > _length)

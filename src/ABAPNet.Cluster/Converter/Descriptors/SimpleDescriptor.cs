@@ -1,5 +1,4 @@
 ﻿using ABAPNet.Cluster.Converter.Types;
-using ABAPNet.Cluster.Utils;
 
 namespace ABAPNet.Cluster.Converter.Descriptors
 {
@@ -22,22 +21,14 @@ namespace ABAPNet.Cluster.Converter.Descriptors
             {
                 writer.WriteByte(_type.StructDescrFlag);
                 writer.WriteByte(_type.TypeFlag);
-                writer.WriteByte(0x00);
+                writer.WriteByte(_type.SpecFlag);
 
                 writer.WriteInvertedInt(GetDescrByteLength());
             }
-            //writer.WriteByte(_parentDescriptor == null ? _type.KindFlag : _type.StructDescrFlag);
-            //writer.WriteByte(_type.TypeFlag);
-            //writer.WriteByte(0x00);
-
-            //writer.WriteInvertedInt(GetDescrByteLength());
         }
 
-        internal override void WriteContent(DataBufferWriter writer, object data)
+        internal override void WriteContent(DataBufferWriter writer, object? data)
         {
-            if (data == null)
-                throw new NullReferenceException("Data can't be null");
-
             writer.CurrentSegment.OpenDataContentContainer(_type is IFlatType ? DataBufferSegment.DataContentContainerType.FlatType : DataBufferSegment.DataContentContainerType.StringType);
 
             if (_type is IFlatType)

@@ -6,6 +6,8 @@
 
         public byte TypeFlag => 0x0e;
 
+        public byte SpecFlag => 0x00;
+
         public byte StructDescrStartFlag => 0xab;
 
         public byte StructDescrEndFlag => 0xac;

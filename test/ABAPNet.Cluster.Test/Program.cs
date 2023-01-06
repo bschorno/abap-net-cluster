@@ -15,4 +15,3 @@ while (offset < hexString.Length)
     Console.WriteLine(hexString16.ToString());
     offset += 32;
 }
-

@@ -1,7 +1,7 @@
 ﻿namespace ABAPNet.Cluster.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class ClusterFieldNameAttribute : Attribute
+    public sealed class ClusterFieldNameAttribute : Attribute
     {
         public string Name { get; set; }
 

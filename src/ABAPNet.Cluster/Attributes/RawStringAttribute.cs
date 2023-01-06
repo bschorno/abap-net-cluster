@@ -2,7 +2,7 @@
 
 namespace ABAPNet.Cluster.Attributes
 {
-    public class RawStringAttribute : TypeAttribute
+    public sealed class RawStringAttribute : TypeAttribute
     {
         public RawStringAttribute() { }
 

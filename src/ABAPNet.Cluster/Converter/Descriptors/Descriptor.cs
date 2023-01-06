@@ -1,6 +1,5 @@
 ﻿using ABAPNet.Cluster.Attributes;
 using ABAPNet.Cluster.Converter.Types;
-using ABAPNet.Cluster.Utils;
 using System.Runtime.CompilerServices;
 
 namespace ABAPNet.Cluster.Converter.Descriptors
@@ -23,7 +22,7 @@ namespace ABAPNet.Cluster.Converter.Descriptors
 
         internal abstract void WriteDescription(DataBufferWriter writer);
 
-        internal abstract void WriteContent(DataBufferWriter writer, object data);
+        internal abstract void WriteContent(DataBufferWriter writer, object? data);
 
         internal static Descriptor Describe(Type type, IType converterType)
             => Describe(type, converterType, null);
@@ -47,7 +46,6 @@ namespace ABAPNet.Cluster.Converter.Descriptors
         protected readonly Type _declaringType;
         protected readonly TType _type;
         private int? _alignmentFactor;
-        private int? _alignmentOffset;
 
         public override IType Type => _type;
 

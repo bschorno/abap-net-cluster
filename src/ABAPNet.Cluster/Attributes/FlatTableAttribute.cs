@@ -2,7 +2,7 @@
 
 namespace ABAPNet.Cluster.Attributes
 {
-    public class FlatTableAttribute : TypeAttribute
+    public sealed class FlatTableAttribute : TypeAttribute
     {
         public FlatTableAttribute() { }
 

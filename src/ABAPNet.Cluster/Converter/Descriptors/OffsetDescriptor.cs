@@ -9,6 +9,8 @@ namespace ABAPNet.Cluster.Converter.Descriptors
             public byte KindFlag => 0xaf;
 
             public byte TypeFlag => 0x04;
+
+            public byte SpecFlag => 0x00;
         }
 
         private static OffsetType StaticOffsetType = new OffsetType();
@@ -39,14 +41,14 @@ namespace ABAPNet.Cluster.Converter.Descriptors
 
         internal override void WriteDescription(DataBufferWriter writer)
         {
-            writer.WriteByte(0xaf);
-            writer.WriteByte(0x04);
-            writer.WriteByte(0x00);
+            writer.WriteByte(Type.KindFlag);
+            writer.WriteByte(Type.TypeFlag);
+            writer.WriteByte(Type.SpecFlag);
 
             writer.WriteInvertedInt(_offset);
         }
 
-        internal override void WriteContent(DataBufferWriter writer, object data)
+        internal override void WriteContent(DataBufferWriter writer, object? data)
         {
             writer.CurrentSegment.OpenDataContentContainer(DataBufferSegment.DataContentContainerType.FlatType);
 

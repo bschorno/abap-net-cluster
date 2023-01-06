@@ -5,5 +5,7 @@
         byte KindFlag { get; }
 
         byte TypeFlag { get; }
+
+        byte SpecFlag { get; }
     }
 }

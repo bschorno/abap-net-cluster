@@ -1,6 +1,5 @@
 ﻿using ABAPNet.Cluster.Attributes;
 using ABAPNet.Cluster.Converter.Types;
-using ABAPNet.Cluster.Utils;
 using System.Reflection;
 
 namespace ABAPNet.Cluster.Converter.Descriptors
@@ -79,7 +78,7 @@ namespace ABAPNet.Cluster.Converter.Descriptors
             {
                 writer.WriteByte(_type.StructDescrStartFlag);
                 writer.WriteByte(_type.TypeFlag);
-                writer.WriteByte(0x00);
+                writer.WriteByte(_type.SpecFlag);
 
                 writer.WriteInvertedInt(GetDescrByteLength());
             }
@@ -93,13 +92,13 @@ namespace ABAPNet.Cluster.Converter.Descriptors
             {
                 writer.WriteByte(_type.StructDescrEndFlag);
                 writer.WriteByte(_type.TypeFlag);
-                writer.WriteByte(0x00);
+                writer.WriteByte(_type.SpecFlag);
 
                 writer.WriteInvertedInt(GetDescrByteLength());
             }
         }
 
-        internal override void WriteContent(DataBufferWriter writer, object data)
+        internal override void WriteContent(DataBufferWriter writer, object? data)
         {
             if (data == null)
                 throw new NullReferenceException("Data can't be null");
@@ -114,9 +113,6 @@ namespace ABAPNet.Cluster.Converter.Descriptors
                 {
                     PropertyInfo propertyInfo = _propertyInfos[descriptor];
                     object? propertyValue = propertyInfo.GetValue(data);
-
-                    if (propertyValue == null)
-                        throw new NullReferenceException("Data can't be null");
 
                     descriptor.WriteContent(writer, propertyValue);
                 }

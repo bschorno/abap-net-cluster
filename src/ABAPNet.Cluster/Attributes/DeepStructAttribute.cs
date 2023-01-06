@@ -2,7 +2,7 @@
 
 namespace ABAPNet.Cluster.Attributes
 {
-    public class DeepStructAttribute : TypeAttribute
+    public sealed class DeepStructAttribute : TypeAttribute
     {
         public DeepStructAttribute() { }
 

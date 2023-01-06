@@ -11,6 +11,8 @@ namespace ABAPNet.Cluster.Converter.Types
 
         public byte TypeFlag => 0x04;
 
+        public byte SpecFlag => 0x00;
+
         public byte StructDescrFlag => 0xaa;
 
         public int StructDescrByteLength => _length;
@@ -25,24 +27,21 @@ namespace ABAPNet.Cluster.Converter.Types
             _length = length;
         }
 
-        public ReadOnlySpan<byte> GetBytes(object data)
+        public ReadOnlySpan<byte> GetBytes(object? data)
         {
             if (data == null)
                 return new Span<byte>(new byte[StructDescrByteLength]);
 
             Type type = data.GetType();
 
-            if (!type.IsArray && data is not IList list)
+            if (!type.IsArray && data is not IList list && type.GetElementType() != typeof(byte))
             {
                 if (_length == 1 && data is byte byteValue)
                     return new Span<byte>(new byte[] { byteValue });
-                throw new Exception("Invalid data type");
+                throw new InvalidTypeException(data, typeof(byte[]), typeof(byte));
             }
 
-            if (type.GetElementType() != typeof(byte))
-                throw new Exception("Invalid data type");
-
-            var rawData = data as byte[];
+            var rawData = (byte[])data;
             if (rawData.Length >= _length)
             {
                 ReadOnlySpan<byte> span = new ReadOnlySpan<byte>(rawData);

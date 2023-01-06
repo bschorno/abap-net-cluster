@@ -2,12 +2,13 @@
 
 namespace ABAPNet.Cluster.Attributes
 {
-    public class CharTableAttribute : TypeAttribute
+    public sealed class CharTableAttribute : TypeAttribute
     {
         public int Length { get; set; }
 
         public CharTableAttribute(int length)
         {
+            if (length <= 0) throw new ArgumentException("Length should be greater than zero", nameof(length));
             Length = length;
         }
 

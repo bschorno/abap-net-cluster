@@ -4,6 +4,6 @@
     {
         byte StructDescrFlag { get; }
 
-        ReadOnlySpan<byte> GetBytes(object data);
+        ReadOnlySpan<byte> GetBytes(object? data);
     }
 }

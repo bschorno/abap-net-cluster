@@ -2,7 +2,7 @@
 
 namespace ABAPNet.Cluster.Attributes
 {
-    public class Int2Attribute : TypeAttribute
+    public sealed class Int2Attribute : TypeAttribute
     {
         public Int2Attribute() { }
 

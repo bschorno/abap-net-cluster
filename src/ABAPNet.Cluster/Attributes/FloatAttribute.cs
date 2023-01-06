@@ -2,13 +2,13 @@
 
 namespace ABAPNet.Cluster.Attributes
 {
-    public sealed class DeepTableAttribute : TypeAttribute
+    public sealed class FloatAttribute : TypeAttribute
     {
-        public DeepTableAttribute() { }
+        public FloatAttribute() { }
 
         internal override IType GetConverterType()
         {
-            return new DeepTableType();
+            return new FloatType();
         }
     }
 }

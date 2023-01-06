@@ -10,6 +10,8 @@ namespace ABAPNet.Cluster.Converter.Types
 
         public byte TypeFlag => 0x00;
 
+        public byte SpecFlag => 0x00;
+
         public byte StructDescrStartFlag => 0xad;
 
         public byte StructDescrEndFlag => 0xae;

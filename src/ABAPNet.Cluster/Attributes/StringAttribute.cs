@@ -2,7 +2,7 @@
 
 namespace ABAPNet.Cluster.Attributes
 {
-    public class StringAttribute : TypeAttribute
+    public sealed class StringAttribute : TypeAttribute
     {
         public StringAttribute() { }
 
