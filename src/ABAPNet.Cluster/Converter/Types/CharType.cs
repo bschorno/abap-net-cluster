@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using ABAPNet.Cluster.Utils;
+using System.Text;
 
 namespace ABAPNet.Cluster.Converter.Types
 {
@@ -26,28 +27,49 @@ namespace ABAPNet.Cluster.Converter.Types
             _length = length;
         }
 
-        public ReadOnlySpan<byte> GetBytes(object? data)
+        private const char SpaceChar = ' ';
+
+        public ReadOnlySpan<byte> GetBytes(object? data, DataBufferConfiguration configuration)
         {
             Span<byte> buffer = new Span<byte>(new byte[StructDescrByteLength]);
 
             if (data == null)
-                data = new string(' ', _length);
-
-            if (data is not string stringValue)
             {
-                if (_length == 1 && data is char charValue)
-                    stringValue = charValue.ToString();
-                else
-                    throw new InvalidTypeException(data, typeof(string), typeof(char));
+                FillBufferWithSpace(configuration.CodePage.Encoding, 0, _length, buffer);
             }
+            else if (data is char charValue && _length == 1)
+            {
+                configuration.CodePage.Encoding.GetBytes(charValue, buffer);   
+            }
+            else if (data is string stringValue)
+            {
+                if (stringValue.Length >= _length)
+                {
+                    ReadOnlySpan<char> chars = stringValue;
+                    configuration.CodePage.Encoding.GetBytes(chars.Slice(0, _length), buffer);
+                }
+                else
+                {
+                    configuration.CodePage.Encoding.GetBytes(stringValue, buffer);
+                    FillBufferWithSpace(configuration.CodePage.Encoding, stringValue.Length, _length, buffer);
+                }
+            }
+            else
+                throw new InvalidTypeException(data, typeof(string), typeof(char));
 
-            if (stringValue.Length > _length)
-                stringValue = stringValue.Substring(0, _length);
-            while (stringValue.Length < _length)
-                stringValue += " ";
-
-            Encoding.Unicode.GetBytes(stringValue, buffer);
             return buffer;
+        }
+
+        private void FillBufferWithSpace(Encoding encoding, int start, int end, Span<byte> buffer)
+        {
+            Span<byte> tempBuffer = stackalloc byte[2];
+            encoding.GetBytes(SpaceChar, tempBuffer);
+
+            for (int i = start * 2; i < end * 2; i += 2)
+            {
+                buffer[i] = tempBuffer[0];
+                buffer[i + 1] = tempBuffer[1];
+            }
         }
     }
 }

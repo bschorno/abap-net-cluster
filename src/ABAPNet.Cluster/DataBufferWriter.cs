@@ -4,6 +4,7 @@ namespace ABAPNet.Cluster
 {
     internal class DataBufferWriter
     {
+        private readonly DataBuffer _dataBuffer;
         private readonly Stream _stream;
         private readonly List<DataBufferSegment> _segments = new List<DataBufferSegment>();
         private DataBufferSegment? _currentSegment;
@@ -12,13 +13,16 @@ namespace ABAPNet.Cluster
 
         public DataBufferSegment? CurrentSegment => _currentSegment;
 
-        public DataBufferWriter(Stream stream)
+        public DataBufferConfiguration Configuration => _dataBuffer.Configuration;
+
+        public DataBufferWriter(DataBuffer dataBuffer, Stream stream)
         {
             if (!stream.CanWrite)
                 throw new NotSupportedException("Stream does not support writing");
             if (!stream.CanSeek)
                 throw new NotSupportedException("Stream does not support seeking");
 
+            _dataBuffer = dataBuffer;
             _stream = stream;
         }
 

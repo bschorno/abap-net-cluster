@@ -26,7 +26,7 @@ namespace ABAPNet.Cluster.Converter.Types
             _length = length;
         }
 
-        public ReadOnlySpan<byte> GetBytes(object? data)
+        public ReadOnlySpan<byte> GetBytes(object? data, DataBufferConfiguration configuration)
         {
             Span<byte> buffer = new Span<byte>(new byte[StructDescrByteLength]);
 

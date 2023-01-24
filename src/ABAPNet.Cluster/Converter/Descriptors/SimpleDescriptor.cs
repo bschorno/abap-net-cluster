@@ -33,11 +33,11 @@ namespace ABAPNet.Cluster.Converter.Descriptors
 
             if (_type is IFlatType)
             {
-                writer.Write(_type.GetBytes(data));
+                writer.Write(_type.GetBytes(data, writer.Configuration));
             }
             else if (_type is IStringType)
             {
-                ReadOnlySpan<byte> buffer = _type.GetBytes(data);
+                ReadOnlySpan<byte> buffer = _type.GetBytes(data, writer.Configuration);
                 writer.WriteInvertedInt(buffer.Length);
                 writer.Write(buffer);
             }

@@ -14,7 +14,7 @@
 
         public int AlignmentFactor => 2;
 
-        public ReadOnlySpan<byte> GetBytes(object? data)
+        public ReadOnlySpan<byte> GetBytes(object? data, DataBufferConfiguration configuration)
         {
             Span<byte> buffer = new Span<byte>(new byte[StructDescrByteLength]);
 

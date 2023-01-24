@@ -17,7 +17,7 @@ namespace ABAPNet.Cluster.Converter.Types
 
         public int AlignmentFactor => 4;
 
-        public ReadOnlySpan<byte> GetBytes(object? data)
+        public ReadOnlySpan<byte> GetBytes(object? data, DataBufferConfiguration configuration)
         {
             if (data == null)
                 return ReadOnlySpan<byte>.Empty;

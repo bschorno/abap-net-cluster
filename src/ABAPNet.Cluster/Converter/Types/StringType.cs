@@ -16,7 +16,7 @@ namespace ABAPNet.Cluster.Converter.Types
 
         public int AlignmentFactor => 4;
 
-        public ReadOnlySpan<byte> GetBytes(object? data)
+        public ReadOnlySpan<byte> GetBytes(object? data, DataBufferConfiguration configuration)
         {
             if (data == null)
                 return ReadOnlySpan<byte>.Empty;
@@ -26,7 +26,7 @@ namespace ABAPNet.Cluster.Converter.Types
 
             Span<byte> buffer = new Span<byte>(new byte[stringValue.Length * 2]);
 
-            Encoding.Unicode.GetBytes(stringValue, buffer);
+            configuration.CodePage.Encoding.GetBytes(stringValue, buffer);
             return buffer;
         }
     }

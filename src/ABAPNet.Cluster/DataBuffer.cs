@@ -7,13 +7,28 @@ namespace ABAPNet.Cluster
 {
     public class DataBuffer
     {
+        private readonly DataBufferConfiguration _configuration;
+
+        internal DataBufferConfiguration Configuration => _configuration;
+
+        public DataBuffer()
+        {
+            _configuration = new DataBufferConfiguration(CodePage.UTF16LE, Endian.LittleEndian);
+        }
+
+        public DataBuffer(DataBufferConfiguration configuration)
+            : this()
+        {
+            _configuration = configuration;
+        }
+
         public byte[] Export<T>(T data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
 
             MemoryStream memoryStream = new MemoryStream();
-            DataBufferWriter writer = new DataBufferWriter(memoryStream);
+            DataBufferWriter writer = new DataBufferWriter(this, memoryStream);
 
             writer.Write(new byte[16] { 0xff, 0x06, 0x02, 0x01, 0x01, 0x02, 0x80, 0x00, 0x34, 0x31, 0x30, 0x33, 0x00, 0x00, 0x00, 0x00 }, 0, 16);
 
