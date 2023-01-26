@@ -24,6 +24,10 @@ namespace ABAPNet.Cluster.Converter.Descriptors
 
         internal abstract void WriteContent(DataBufferWriter writer, object? data);
 
+        internal abstract void ReadDescription(DataBufferReader reader);
+
+        internal abstract void ReadContent(DataBufferReader reader, ref object? data);
+
         internal static Descriptor Describe(Type type, IType converterType)
             => Describe(type, converterType, null);
 

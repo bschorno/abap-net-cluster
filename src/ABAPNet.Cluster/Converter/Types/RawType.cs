@@ -27,7 +27,7 @@ namespace ABAPNet.Cluster.Converter.Types
             _length = length;
         }
 
-        public ReadOnlySpan<byte> GetBytes(object? data, DataBufferConfiguration configuration)
+        public ReadOnlySpan<byte> GetBytes(object? data, IDataBufferContext context)
         {
             if (data == null)
                 return new Span<byte>(new byte[StructDescrByteLength]);
@@ -53,6 +53,22 @@ namespace ABAPNet.Cluster.Converter.Types
                 rawData.CopyTo(buffer);
                 return buffer;
             }
+        }
+
+        public void SetBytes(ref object data, ReadOnlySpan<byte> buffer, IDataBufferContext context)
+        {
+            Type type = data.GetType();
+
+            if (type.IsArray && data is IList && type.GetElementType() == typeof(byte))
+            {
+                data = buffer.ToArray();
+            }
+            else if (data is not byte && _length == 1)
+            {
+                data = buffer[0];
+            }
+            else
+                throw new InvalidTypeException(data, typeof(byte[]));
         }
     }
 }

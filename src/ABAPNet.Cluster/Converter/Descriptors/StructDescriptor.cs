@@ -118,5 +118,54 @@ namespace ABAPNet.Cluster.Converter.Descriptors
                 }
             }
         }
+
+        internal override void ReadDescription(DataBufferReader reader)
+        {
+            if (_parentDescriptor is not TableDescriptor)
+            {
+                if (_type.StructDescrStartFlag != reader.ReadByte() ||
+                    _type.TypeFlag != reader.ReadByte() ||
+                    _type.SpecFlag != reader.ReadByte() ||
+                    GetDescrByteLength() != reader.ReadInvertedInt())
+                    throw new Exception("Invalid type description");
+            }
+
+            foreach (var descriptor in _componentDescriptors)
+            {
+                descriptor.ReadDescription(reader);
+            }
+
+            if (_parentDescriptor is not TableDescriptor)
+            {
+                if (_type.StructDescrEndFlag != reader.ReadByte() ||
+                    _type.TypeFlag != reader.ReadByte() ||
+                    _type.SpecFlag != reader.ReadByte() ||
+                    GetDescrByteLength() != reader.ReadInvertedInt())
+                    throw new Exception("Invalid type description");
+            }
+        }
+
+        internal override void ReadContent(DataBufferReader reader, ref object? data)
+        {
+            data = Activator.CreateInstance(_declaringType);
+            if (data == null)
+                throw new InvalidTypeException($"Couldn't create instance of type {_declaringType}");
+
+            foreach (var descriptor in _componentDescriptors)
+            {
+                if (descriptor is OffsetDescriptor)
+                {
+                    object? dummy = null;
+                    descriptor.ReadContent(reader, ref dummy);
+                }
+                else
+                {
+                    PropertyInfo propertyInfo = _propertyInfos[descriptor];
+                    object? propertyValue = propertyInfo.GetValue(data);
+
+                    descriptor.ReadContent(reader, ref propertyValue);
+                }
+            }
+        }
     }
 }

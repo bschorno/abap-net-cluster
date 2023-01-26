@@ -14,7 +14,7 @@
 
         public int AlignmentFactor => 1;
 
-        public ReadOnlySpan<byte> GetBytes(object? data, DataBufferConfiguration configuration)
+        public ReadOnlySpan<byte> GetBytes(object? data, IDataBufferContext context)
         {
             Span<byte> buffer = new Span<byte>(new byte[StructDescrByteLength]);
 
@@ -29,6 +29,16 @@
             };
 
             return buffer;
+        }
+
+        public void SetBytes(ref object data, ReadOnlySpan<byte> buffer, IDataBufferContext context)
+        {
+            data = data switch
+            {
+                byte => buffer[0],
+                sbyte => (sbyte)buffer[0],
+                _ => throw new InvalidTypeException(data, typeof(byte), typeof(sbyte))
+            };
         }
     }
 }

@@ -51,7 +51,7 @@ namespace ABAPNet.Cluster.Converter.Descriptors
             if (data is not IList list)
                 throw new InvalidTypeException(data, typeof(IList));
 
-            writer.CurrentSegment.OpenDataContentContainer(DataBufferSegment.DataContentContainerType.TableType);
+            writer.OpenDataContentContainer(DataContentContainerType.TableType);
 
             writer.WriteInvertedInt(GetDescrByteLength());
             writer.WriteInvertedInt(list.Count);
@@ -60,14 +60,68 @@ namespace ABAPNet.Cluster.Converter.Descriptors
             {
                 _componentDescriptors[0].WriteContent(writer, item);
 
-                DataBufferSegment.DataContentContainerType? dataContentContainerType = writer.CurrentSegment.GetCurrentDataContentContainer();
+                DataContentContainerType? dataContentContainerType = writer.GetCurrentDataContentContainer();
                 if (dataContentContainerType != null && 
-                    (dataContentContainerType == DataBufferSegment.DataContentContainerType.FlatType ||
-                     dataContentContainerType == DataBufferSegment.DataContentContainerType.StringType))
-                    writer.CurrentSegment.CloseDataContenetContainer(dataContentContainerType.Value);
+                    (dataContentContainerType == DataContentContainerType.FlatType ||
+                     dataContentContainerType == DataContentContainerType.StringType))
+                    writer.CloseDataContentContainer(dataContentContainerType.Value);
             }
 
-            writer.CurrentSegment.CloseDataContenetContainer(DataBufferSegment.DataContentContainerType.TableType);
+            writer.CloseDataContentContainer(DataContentContainerType.TableType);
+        }
+
+        internal override void ReadDescription(DataBufferReader reader)
+        {
+            if (_type.StructDescrStartFlag != reader.ReadByte() ||
+                _type.TypeFlag != reader.ReadByte() ||
+                _type.SpecFlag != reader.ReadByte() ||
+                GetDescrByteLength() != reader.ReadInvertedInt())
+                throw new Exception("Invalid type description");
+
+            _componentDescriptors[0].ReadDescription(reader);
+
+            if (_type.StructDescrEndFlag != reader.ReadByte() ||
+                _type.TypeFlag != reader.ReadByte() ||
+                _type.SpecFlag != reader.ReadByte() ||
+                GetDescrByteLength() != reader.ReadInvertedInt())
+                throw new Exception("Invalid type description");
+        }
+
+        internal override void ReadContent(DataBufferReader reader, ref object? data)
+        {
+            data = Activator.CreateInstance(_declaringType);
+            if (data == null)
+                throw new InvalidTypeException($"Couldn't create instance of type {_declaringType}");
+
+            if (data is not IList list)
+                throw new InvalidTypeException(data, typeof(IList));
+
+            if (reader.GetOpeningDataContentContainer() != DataContentContainerType.TableType)
+                throw new Exception("Invalid content");
+
+            if (GetDescrByteLength() != reader.ReadInvertedInt())
+                throw new Exception("Invalid content");
+
+            var itemCount = reader.ReadInvertedInt();
+
+            for (int i = 0; i < itemCount; i++) 
+            {
+                object? item = null;
+
+                _componentDescriptors[0].ReadContent(reader, ref item);
+
+                var dataContentContainer = reader.GetCurrentDataContentContainer();
+                if (dataContentContainer != null &&
+                    dataContentContainer == DataContentContainerType.FlatType ||
+                    dataContentContainer == DataContentContainerType.StringType)
+                    reader.GetClosingDataContentContainer();
+
+                if (item != null)
+                    list.Add(item);
+            }
+
+            if (reader.GetClosingDataContentContainer() != DataContentContainerType.TableType)
+                throw new Exception("Invalid content");
         }
     }
 }

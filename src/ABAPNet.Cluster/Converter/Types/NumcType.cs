@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.ComponentModel;
+using System.Text;
 
 namespace ABAPNet.Cluster.Converter.Types
 {
@@ -26,7 +27,7 @@ namespace ABAPNet.Cluster.Converter.Types
             _length = length;
         }
 
-        public ReadOnlySpan<byte> GetBytes(object? data, DataBufferConfiguration configuration)
+        public ReadOnlySpan<byte> GetBytes(object? data, IDataBufferContext context)
         {
             Span<byte> buffer = new Span<byte>(new byte[StructDescrByteLength]);
 
@@ -60,6 +61,35 @@ namespace ABAPNet.Cluster.Converter.Types
 
             Encoding.Unicode.GetBytes(stringValue, buffer);
             return buffer;
+        }
+
+        public void SetBytes(ref object data, ReadOnlySpan<byte> buffer, IDataBufferContext context)
+        {
+            Span<char> chars = stackalloc char[_length];
+
+            Encoding.Unicode.GetChars(buffer, chars);
+
+            var result = data switch
+            {
+                byte => TryParse<byte>(chars, out data, byte.TryParse),
+                short => TryParse<short>(chars, out data, short.TryParse),
+                int => TryParse<int>(chars, out data, int.TryParse),
+                long => TryParse<long>(chars, out data, long.TryParse),
+                sbyte => TryParse<sbyte>(chars, out data, sbyte.TryParse),
+                ushort => TryParse<ushort>(chars, out data, ushort.TryParse),
+                uint => TryParse<uint>(chars, out data, uint.TryParse),
+                ulong => TryParse<ulong>(chars, out data, ulong.TryParse),
+                _ => throw new InvalidTypeException(data, typeof(byte), typeof(short), typeof(int), typeof(long), typeof(sbyte), typeof(ushort), typeof(uint), typeof(ulong), typeof(string))
+            };
+        }
+
+        private delegate bool TryParseHandler<T>(ReadOnlySpan<char> chars, out T value);
+
+        private bool TryParse<T>(Span<char> chars, out object value, TryParseHandler<T> handler) where T : struct
+        {
+            var result = handler(chars, out T castResult);
+            value = castResult;
+            return result;
         }
     }
 }

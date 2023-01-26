@@ -31,7 +31,7 @@ namespace ABAPNet.Cluster.Converter.Types
             _decimals = decimals;
         }   
 
-        public ReadOnlySpan<byte> GetBytes(object? data, DataBufferConfiguration configuration)
+        public ReadOnlySpan<byte> GetBytes(object? data, IDataBufferContext context)
         {
             Span<byte> buffer = new Span<byte>(new byte[_length]);
 
@@ -51,6 +51,11 @@ namespace ABAPNet.Cluster.Converter.Types
             GetBytes(decimalValue, ref buffer);
 
             return buffer;
+        }
+
+        public void SetBytes(ref object data, ReadOnlySpan<byte> buffer, IDataBufferContext context)
+        {
+            throw new NotImplementedException();
         }
 
         private void GetBytes(decimal value, ref Span<byte> buffer)

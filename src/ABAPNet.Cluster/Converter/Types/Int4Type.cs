@@ -14,7 +14,7 @@
 
         public int AlignmentFactor => 4;
 
-        public ReadOnlySpan<byte> GetBytes(object? data, DataBufferConfiguration configuration)
+        public ReadOnlySpan<byte> GetBytes(object? data, IDataBufferContext context)
         {
             Span<byte> buffer = new Span<byte>(new byte[StructDescrByteLength]);
 
@@ -32,6 +32,16 @@
                 throw new Exception("Unexpected exception");
 
             return buffer;
+        }
+
+        public void SetBytes(ref object data, ReadOnlySpan<byte> buffer, IDataBufferContext context)
+        {
+            data = data switch
+            {
+                int => BitConverter.ToInt32(buffer),
+                uint => BitConverter.ToUInt32(buffer),
+                _ => throw new InvalidTypeException(data, typeof(int), typeof(uint))
+            };
         }
     }
 }

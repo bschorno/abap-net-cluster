@@ -50,9 +50,26 @@ namespace ABAPNet.Cluster.Converter.Descriptors
 
         internal override void WriteContent(DataBufferWriter writer, object? data)
         {
-            writer.CurrentSegment.OpenDataContentContainer(DataBufferSegment.DataContentContainerType.FlatType);
+            writer.OpenDataContentContainer(DataContentContainerType.FlatType);
 
             writer.Write(new byte[_offset]);
+        }
+
+        internal override void ReadDescription(DataBufferReader reader)
+        {
+            if (Type.KindFlag != reader.ReadByte() ||
+                Type.TypeFlag != reader.ReadByte() ||
+                Type.SpecFlag != reader.ReadByte() ||
+                _offset != reader.ReadInvertedInt())
+                throw new Exception("Invalid type description");
+        }
+
+        internal override void ReadContent(DataBufferReader reader, ref object? data)
+        {
+            if (reader.GetOpeningDataContentContainer() != DataContentContainerType.FlatType)
+                throw new Exception("Invalid content");
+
+            reader.Skip(_offset);
         }
     }
 }
