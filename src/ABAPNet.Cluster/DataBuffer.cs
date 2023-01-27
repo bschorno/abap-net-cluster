@@ -29,7 +29,7 @@ namespace ABAPNet.Cluster
 
             using MemoryStream memoryStream = new MemoryStream();
             using DataBufferWriter writer = new DataBufferWriter(this, memoryStream);
-;
+
             writer.WriteHeader();
 
             foreach (var segment in GetSegments(data))
