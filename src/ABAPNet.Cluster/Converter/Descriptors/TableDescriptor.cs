@@ -89,13 +89,6 @@ namespace ABAPNet.Cluster.Converter.Descriptors
 
         internal override void ReadContent(DataBufferReader reader, ref object? data)
         {
-            data = Activator.CreateInstance(_declaringType);
-            if (data == null)
-                throw new InvalidTypeException($"Couldn't create instance of type {_declaringType}");
-
-            if (data is not IList list)
-                throw new InvalidTypeException(data, typeof(IList));
-
             if (reader.GetOpeningDataContentContainer() != DataContentContainerType.TableType)
                 throw new Exception("Invalid content");
 
@@ -103,6 +96,16 @@ namespace ABAPNet.Cluster.Converter.Descriptors
                 throw new Exception("Invalid content");
 
             var itemCount = reader.ReadInvertedInt();
+
+            if (_declaringType.IsArray)
+                data = Activator.CreateInstance(_declaringType, itemCount);
+            else
+                data = Activator.CreateInstance(_declaringType);
+            if (data == null)
+                throw new InvalidTypeException($"Couldn't create instance of type {_declaringType}");
+
+            if (data is not IList list)
+                throw new InvalidTypeException(data, typeof(IList));
 
             for (int i = 0; i < itemCount; i++) 
             {
@@ -117,7 +120,12 @@ namespace ABAPNet.Cluster.Converter.Descriptors
                     reader.GetClosingDataContentContainer();
 
                 if (item != null)
-                    list.Add(item);
+                {
+                    if (_declaringType.IsArray)
+                        list[i] = item;
+                    else
+                        list.Add(item);
+                }
             }
 
             if (reader.GetClosingDataContentContainer() != DataContentContainerType.TableType)

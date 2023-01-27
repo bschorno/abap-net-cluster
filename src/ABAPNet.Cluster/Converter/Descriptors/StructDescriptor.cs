@@ -161,9 +161,9 @@ namespace ABAPNet.Cluster.Converter.Descriptors
                 else
                 {
                     PropertyInfo propertyInfo = _propertyInfos[descriptor];
-                    object? propertyValue = propertyInfo.GetValue(data);
-
+                    object? propertyValue = null;
                     descriptor.ReadContent(reader, ref propertyValue);
+                    propertyInfo.SetValue(data, propertyValue);
                 }
             }
         }

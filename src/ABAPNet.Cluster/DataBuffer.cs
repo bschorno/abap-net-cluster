@@ -80,6 +80,8 @@ namespace ABAPNet.Cluster
 
                 reader.OpenSegment(segment);
 
+                segment.Descriptor.ReadDescription(reader);
+
                 object? segmentData = null;
                 segment.Descriptor.ReadContent(reader, ref segmentData);
                 segment.PropertyInfo.SetValue(data, segmentData);

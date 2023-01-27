@@ -36,12 +36,23 @@
 
         public void SetBytes(ref object data, ReadOnlySpan<byte> buffer, IDataBufferContext context)
         {
-            data = data switch
+            switch (data)
             {
-                float => BitConverter.ToSingle(buffer),
-                double => BitConverter.ToDouble(buffer),
-                _ => throw new InvalidTypeException(data, typeof(float), typeof(double))
-            };
+                case float:
+                    data = (float)BitConverter.ToDouble(buffer);
+                    break;
+                case double:
+                    data = BitConverter.ToDouble(buffer);
+                    break;
+                default:
+                    throw new InvalidTypeException(data, typeof(float), typeof(double));
+            }
+            //data = data switch
+            //{
+            //    float => (float)BitConverter.ToDouble(buffer),
+            //    double => BitConverter.ToDouble(buffer),
+            //    _ => throw new InvalidTypeException(data, typeof(float), typeof(double))
+            //};
         }
     }
 }

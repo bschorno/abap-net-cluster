@@ -63,7 +63,7 @@ namespace ABAPNet.Cluster.Converter.Types
             {
                 data = buffer.ToArray();
             }
-            else if (data is not byte && _length == 1)
+            else if (data is byte && _length == 1)
             {
                 data = buffer[0];
             }

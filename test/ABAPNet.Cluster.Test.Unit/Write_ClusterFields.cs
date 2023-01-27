@@ -1,5 +1,4 @@
 ﻿using ABAPNet.Cluster.Attributes;
-using System.Runtime.CompilerServices;
 
 namespace ABAPNet.Cluster.Test.Unit
 {

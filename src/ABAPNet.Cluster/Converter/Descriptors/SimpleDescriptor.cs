@@ -69,7 +69,12 @@ namespace ABAPNet.Cluster.Converter.Descriptors
             if (_type is IFlatType)
             {
                 if (dataContentContainer != DataContentContainerType.FlatType)
-                    throw new Exception("Invalid content");
+                {
+                    reader.GetClosingDataContentContainer();
+                    dataContentContainer = reader.GetOpeningDataContentContainer();
+                    if (dataContentContainer != DataContentContainerType.FlatType)
+                        throw new Exception("Invalid content");
+                }
 
                 Span<byte> dataBuffer = stackalloc byte[GetDescrByteLength()];
                 reader.Read(dataBuffer);
@@ -79,7 +84,12 @@ namespace ABAPNet.Cluster.Converter.Descriptors
             else if (_type is IStringType)
             {
                 if (dataContentContainer != DataContentContainerType.StringType)
-                    throw new Exception("Invalid content");
+                {
+                    reader.GetClosingDataContentContainer();
+                    dataContentContainer = reader.GetOpeningDataContentContainer();
+                    if (dataContentContainer != DataContentContainerType.StringType)
+                        throw new Exception("Invalid content");
+                }
 
                 var dataLength = reader.ReadInvertedInt();
                 Span<byte> dataBuffer = new byte[dataLength];
