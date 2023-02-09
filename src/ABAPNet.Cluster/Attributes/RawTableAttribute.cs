@@ -2,11 +2,11 @@
 
 namespace ABAPNet.Cluster.Attributes
 {
-    public sealed class CharTableAttribute : TypeAttribute
+    public sealed class RawTableAttribute : TypeAttribute
     {
         public int Length { get; set; }
 
-        public CharTableAttribute(int length)
+        public RawTableAttribute(int length)
         {
             if (length <= 0) throw new ArgumentException("Length should be greater than zero", nameof(length));
             Length = length;
@@ -14,7 +14,7 @@ namespace ABAPNet.Cluster.Attributes
 
         internal override IType GetConverterType()
         {
-            return new FlatTableType<CharType>(new CharType(Length));
+            return new FlatTableType<RawType>(new RawType(Length));
         }
     }
 }
