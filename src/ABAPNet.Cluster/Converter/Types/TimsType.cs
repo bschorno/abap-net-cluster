@@ -40,54 +40,54 @@ namespace ABAPNet.Cluster.Converter.Types
                 return buffer;
             }
 
-            Span<char> year = stackalloc char[4];
-            Span<char> month = stackalloc char[2];
-            Span<char> day = stackalloc char[2];
+            Span<char> hour = stackalloc char[2];
+            Span<char> minute = stackalloc char[2];
+            Span<char> second = stackalloc char[2];
 
-            ReadOnlySpan<char> format = stackalloc char[4] { '0', '0', '0', '0' };
+            ReadOnlySpan<char> format = stackalloc char[2] { '0', '0' };
 
-            if (data is DateOnly dateOnly)
+            if (data is TimeOnly timeOnly)
             {
-                dateOnly.Year.TryFormat(year, out int charsWritten, format);
-                dateOnly.Month.TryFormat(month, out charsWritten, format[..2]);
-                dateOnly.Day.TryFormat(day, out charsWritten, format[..2]);
+                timeOnly.Hour.TryFormat(hour, out int charsWritten, format);
+                timeOnly.Minute.TryFormat(minute, out charsWritten, format);
+                timeOnly.Second.TryFormat(second, out charsWritten, format);
             }
             else if (data is DateTime dateTime)
             {
-                dateTime.Year.TryFormat(year, out int charsWritten, format);
-                dateTime.Month.TryFormat(month, out charsWritten, format[..2]);
-                dateTime.Day.TryFormat(day, out charsWritten, format[..2]);
+                dateTime.Hour.TryFormat(hour, out int charsWritten, format);
+                dateTime.Minute.TryFormat(minute, out charsWritten, format);
+                dateTime.Second.TryFormat(second, out charsWritten, format);
             }
             else
-                throw new InvalidTypeException(data, typeof(DateOnly), typeof(DateTime));
+                throw new InvalidTypeException(data, typeof(TimeOnly), typeof(DateTime));
 
-            context.Configuration.CodePage.Encoding.GetBytes(year, buffer[0..8]);
-            context.Configuration.CodePage.Encoding.GetBytes(month, buffer[8..12]);
-            context.Configuration.CodePage.Encoding.GetBytes(day, buffer[12..16]);
+            context.Configuration.CodePage.Encoding.GetBytes(hour, buffer[0..4]);
+            context.Configuration.CodePage.Encoding.GetBytes(minute, buffer[4..8]);
+            context.Configuration.CodePage.Encoding.GetBytes(second, buffer[8..12]);
 
             return buffer;
         }
 
         public void SetBytes(ref object data, ReadOnlySpan<byte> buffer, IDataBufferContext context)
         {
-            Span<char> chars = stackalloc char[8];
+            Span<char> chars = stackalloc char[6];
 
             context.Configuration.CodePage.Encoding.GetChars(buffer, chars);
 
-            _ = int.TryParse(chars[0..4], out int year);
-            _ = int.TryParse(chars[4..6], out int month);
-            _ = int.TryParse(chars[6..8], out int day);
+            _ = int.TryParse(chars[0..2], out int hour);
+            _ = int.TryParse(chars[2..4], out int minute);
+            _ = int.TryParse(chars[4..6], out int second);
 
-            if (data is DateOnly dateOnly)
+            if (data is TimeOnly timeOnly)
             {
-                data = new DateOnly(year, month, day);
+                data = new TimeOnly(hour, minute, second);
             }
             else if (data is DateTime dateTime)
             {
-                data = new DateTime(year, month, day);
+                data = new DateTime(0, 0, 0, hour, minute, second);
             }
             else
-                throw new InvalidTypeException(data, typeof(DateOnly), typeof(DateTime));
+                throw new InvalidTypeException(data, typeof(TimeOnly), typeof(DateTime));
         }
     }
 }
