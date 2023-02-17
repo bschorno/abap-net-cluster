@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
@@ -11,9 +11,9 @@
 		<Authors>bschorno</Authors>
 		<Company></Company>
 		<Copyright>Copyright (c) 2023 Bruno Schorno</Copyright>
-		<AssemblyVersion>1.2.0.1</AssemblyVersion>
-		<FileVersion>1.2.0.1</FileVersion>
-		<Version>1.2.0</Version>
+		<AssemblyVersion>1.2.1.1</AssemblyVersion>
+		<FileVersion>1.2.1.1</FileVersion>
+		<Version>1.2.1</Version>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/bschorno/abap-net-cluster</RepositoryUrl>
