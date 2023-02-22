@@ -7,9 +7,9 @@ It provides functionality to import from or export to a SAP cluster format. Not 
 ABAPNet.Cluster is distributed via NuGet as a NuGet package. It can be installed into your project using NuGet Package Manager in Visual Studio.
 
 **Package Manager CLI**
-```Install-Package ABAPNet.Cluster -Version 1.2.2```
+```Install-Package ABAPNet.Cluster -Version 1.2.3```
 
 **.NET CLI**
-```dotnet add package ABAPNet.Cluster --version 1.2.2``` 
+```dotnet add package ABAPNet.Cluster --version 1.2.3``` 
 
 A documentation will be added soon.
