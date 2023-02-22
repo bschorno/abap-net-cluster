@@ -89,6 +89,12 @@ namespace ABAPNet.Cluster.Converter.Descriptors
 
         internal override void ReadContent(DataBufferReader reader, ref object? data)
         {
+            var currentDataContentContainer = reader.GetCurrentDataContentContainer();
+            if (currentDataContentContainer != null &&
+                (currentDataContentContainer == DataContentContainerType.FlatType || 
+                 currentDataContentContainer == DataContentContainerType.StringType))
+                reader.GetClosingDataContentContainer();
+
             if (reader.GetOpeningDataContentContainer() != DataContentContainerType.TableType)
                 throw new Exception("Invalid content");
 
@@ -115,8 +121,8 @@ namespace ABAPNet.Cluster.Converter.Descriptors
 
                 var dataContentContainer = reader.GetCurrentDataContentContainer();
                 if (dataContentContainer != null &&
-                    dataContentContainer == DataContentContainerType.FlatType ||
-                    dataContentContainer == DataContentContainerType.StringType)
+                    (dataContentContainer == DataContentContainerType.FlatType ||
+                     dataContentContainer == DataContentContainerType.StringType))
                     reader.GetClosingDataContentContainer();
 
                 if (item != null)

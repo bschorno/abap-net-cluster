@@ -36,6 +36,8 @@ namespace ABAPNet.Cluster.Converter.Descriptors
 
                 if (descriptor.Type is IDefinedType definedType)
                     byteOffset += definedType.StructDescrByteLength;
+                else // <- Inserted later (Must be kept in mind)
+                    byteOffset += descriptor.GetDescrByteLength();
 
                 descriptors.Add(descriptor);
                 _propertyInfos.Add(descriptor, properties[i]);
