@@ -6,13 +6,13 @@ namespace ABAPNet.Cluster.Converter.Types
     {
         public byte KindFlag => 0x01;
 
-        public byte TypeFlag => 0x03;
+        public byte TypeFlag => 0x01;
 
         public byte SpecFlag => 0x00;
 
         public byte StructDescrFlag => 0xaa;
 
-        public int StructDescrByteLength => 12;
+        public int StructDescrByteLength => 16;
 
         public int AlignmentFactor => 2;
 
