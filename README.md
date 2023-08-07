@@ -46,7 +46,7 @@ struct Employee
 ``` 
 
 The data can then be exported using the `DataBuffer` class. The resulting byte-array can be used in SAP for importing the data with `IMPORT ... FROM DATA BUFFER ...`
-```chsarp
+```csharp
 ClusterData data = new()
 {
     Employees = new Employee[]
@@ -88,3 +88,28 @@ EXPORT employees = lt_employees TO DATA BUFFER lv_data_export.
 DataBuffer dataBuffer = new DataBuffer();
 data = dataBuffer.Import<ClusterData>(dataExport);
 ```
+
+## Supports/Features
+This library was only tested on an **R/3 750 SP17** and currently only supports a **little-endian** system. Extension for a big-endian system are foreseen but not yet fully implemented. Also only the codepage **4103** (utf-16le) is supported yet.
+
+### Supported types/attributes
+The following attributes are provided to support the corresponding ABAP-types. For all attributes there is a corresponding table attribute, e.g. `Char` -> `CharTable`.
+| Attribute | Corresponding ABAP-types | Supported .NET-types |
+| --------- | ------------------------ | -------------------- |
+| Char(Length) | `c` | `string`, `char`, `char[]` |
+| Dats | `d` | `DateOnly`, `DateTime` |
+| Decimal(Length, Decimals) | `p` | `decimal`, `double`, `float` |
+| DeepStruct | deep structs | `struct`, `class` |
+| DeepTable | tables with deep structs | `IList` |
+| FlatStruct | flat structs | `struct`, `class` |
+| FlatTable | tables with flat structs | `IList` |
+| Float | `f` | `float`, `double` |
+| Int1 | `int1` | `byte`, `sbyte` |
+| Int2 | `int2` | `short`, `ushort` |
+| Int4 | `int4` | `int`, `uint` |
+| Int8 | `int8` | `long`, `ulong` |
+| Numc(Length) | `n` | `byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `string` |
+| RawStringType | `xstring` | `byte[]` |
+| Raw(Length) | `x` | `byte[]`, `byte` |
+| String | `string` | `string` |
+| Tims | `t` | `TimeOnly`, `DateTime` |
