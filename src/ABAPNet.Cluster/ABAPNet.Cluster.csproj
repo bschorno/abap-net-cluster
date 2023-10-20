@@ -11,9 +11,9 @@
 		<Authors>bschorno</Authors>
 		<Company></Company>
 		<Copyright>Copyright (c) 2023 Bruno Schorno</Copyright>
-		<AssemblyVersion>1.2.3.0</AssemblyVersion>
-		<FileVersion>1.2.3.0</FileVersion>
-		<Version>1.2.3</Version>
+		<AssemblyVersion>1.2.4.0</AssemblyVersion>
+		<FileVersion>1.2.4.0</FileVersion>
+		<Version>1.2.4</Version>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/bschorno/abap-net-cluster</RepositoryUrl>
