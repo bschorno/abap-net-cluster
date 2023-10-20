@@ -33,11 +33,13 @@ namespace ABAPNet.Cluster.Converter.Descriptors
 
         protected static Descriptor Describe(Type type, IType converterType, Descriptor? parentDescriptor)
         {
+            Type? underlingType = Nullable.GetUnderlyingType(type);
+
             Descriptor descriptor = converterType switch
             {
-                ISimpleType simpleType => new SimpleDescriptor(simpleType, type, parentDescriptor),
-                IStructType structType => new StructDescriptor(structType, type, parentDescriptor),
-                ITableType tableType => new TableDescriptor(tableType, type, parentDescriptor),
+                ISimpleType simpleType => new SimpleDescriptor(simpleType, underlingType ?? type, parentDescriptor),
+                IStructType structType => new StructDescriptor(structType, underlingType ?? type, parentDescriptor),
+                ITableType tableType => new TableDescriptor(tableType, underlingType ?? type, parentDescriptor),
                 _ => throw new Exception("Invalid type attribute")
             };
 

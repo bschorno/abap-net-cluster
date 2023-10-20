@@ -1,17 +1,36 @@
 ﻿using ABAPNet.Cluster;
 using ABAPNet.Cluster.Attributes;
-using ABAPNet.Cluster.Test;
 
 DataBuffer dataBuffer = new DataBuffer();
-byte[] byteData = dataBuffer.Export(TestHxD.GetCluster());
+byte[] byteData = dataBuffer.Export(new Cluster());
 
-File.WriteAllBytes(@"C:\Users\Bruno Schorno\Desktop\data_buffer_net.bin", byteData);
-
-ReadOnlySpan<char> hexString = Convert.ToHexString(byteData);
-int offset = 0;
-while (offset < hexString.Length)
+internal sealed class Cluster
 {
-    ReadOnlySpan<char> hexString16 = hexString.Slice(offset, Math.Min(32, hexString.Length - offset));
-    Console.WriteLine(hexString16.ToString());
-    offset += 32;
+    [ClusterFieldName("DATA")]
+    [DeepTable]
+    public ClusterStruct[]? Data { get; set; }
+}
+
+internal sealed class ClusterStruct
+{
+    [Int4]
+    public int Id { get; set; }
+
+    [DeepStruct]
+    public ClusterValue? Value { get; set; }
+}
+
+internal struct ClusterValue
+{
+    [String]
+    public string? Type { get; set; }
+
+    [String]
+    public string? Value { get; set; }
+
+    public ClusterValue(string? type, string? value)
+    {
+        Type = type;
+        Value = value;
+    }
 }
